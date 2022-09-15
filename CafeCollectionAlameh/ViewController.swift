@@ -16,8 +16,10 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var passwordOutlet: UITextField!
     @IBOutlet weak var totalOutlet: UILabel!
     @IBOutlet weak var newItemOutlet: UITextField!
-    
     @IBOutlet weak var newItemPriceOutlet: UITextField!
+    @IBOutlet weak var nameButtonOutlet: UIButton!
+    @IBOutlet weak var priceButtonOutlet: UIButton!
+    
     
     var thePassword = "Masterful chicken"
     
@@ -37,11 +39,25 @@ class ViewController: UIViewController, UITextFieldDelegate {
         informationOutlet.layer.cornerRadius = 20
         cartOutlet.layer.masksToBounds = true
         cartOutlet.layer.cornerRadius = 20
+        nameButtonOutlet.layer.masksToBounds = true
+        nameButtonOutlet.layer.cornerRadius = 20
+        priceButtonOutlet.layer.masksToBounds = true
+        priceButtonOutlet.layer.cornerRadius = 20
         
-        printDictionary()
+        
+        
+        sortByName()
         
     }
-
+    
+    
+    @IBAction func nameButton(_ sender: UIButton) {
+        sortByName()
+    }
+    @IBAction func priceButton(_ sender: UIButton) {
+        sortByPrice()
+    }
+    
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
@@ -62,7 +78,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     func addItem() {
-        printDictionary()
+        sortByName()
         let text = textFieldOutlet.text!
         textFieldOutlet.text = ""
         if itemDict[text] != nil {
@@ -82,7 +98,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             if let test = Double(newItemPriceOutlet.text!) {
                 if (newItemOutlet.text != "") {
                     itemDict[newItemOutlet.text!] = test
-                    printDictionary()
+                    sortByName()
                     informationOutlet.text = "Item \(newItemOutlet.text!) successfully added"
                 }
                 else {
@@ -99,10 +115,40 @@ class ViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    func printDictionary() {
+    func sortByName() {
+        var names = [String]()
+        for (name, _) in itemDict {
+            names.append(name)
+        }
+        names.sort()
         var text = ""
-        for (itemName,price) in itemDict {
-            text += "\n•\(itemName): $\(price)"
+        var first = true
+        for name in names {
+            if (!first) {
+                text += "\n"
+            }
+            text += "•\(name): $\(itemDict[name]!)"
+            first = false
+        }
+        itemsOutlet.text = text
+    }
+    
+    func sortByPrice() {
+        var values = [Double]()
+        var valuesDict = [Double: String]()
+        for (name, value) in itemDict {
+            values.append(value)
+            valuesDict[value] = name
+        }
+        values.sort()
+        var text = ""
+        var first = true
+        for value in values {
+            if (!first){
+                text += "\n"
+            }
+            text += "•\(valuesDict[value]!): $\(value)"
+            first = false
         }
         itemsOutlet.text = text
     }
@@ -111,9 +157,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
         print(cartList)
         var text = ""
         var total = 0.0;
+        var first = true
         for itemName in cartList {
-            text += "\n•\(itemName): $\(itemDict[itemName]!)"
+            if (!first) {
+                text += "\n"
+            }
+            text += "•\(itemName): $\(itemDict[itemName]!)"
             total += itemDict[itemName]!
+            first = false
         }
         cartOutlet.text = text
         totalOutlet.text = "$\(total)"
